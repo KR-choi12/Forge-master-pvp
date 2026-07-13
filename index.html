@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏪 학교 매점 POS V2</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        nav {
+            display: flex;
+            background: #1e40af;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+        }
+
+        nav button {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px;
+            border: 0;
+            color: white;
+            background: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav button:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        nav button.active {
+            background: #3b82f6;
+            border-bottom: 4px solid #fbbf24;
+        }
+
+        .content {
+            padding: 20px;
+            min-height: 600px;
+        }
+
+        section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #2563eb;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            color: #1e40af;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 15px;
+        }
+
+        .card h3 {
+            color: #2563eb;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        input, select {
+            padding: 12px 15px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        button.action {
+            padding: 12px 25px;
+            border: 0;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        button.action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+        }
+
+        button.action:active {
+            transform: translateY(0);
+        }
+
+        button.delete {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        button.delete:hover {
+            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
+        }
+
+        button.secondary {
+            background: #6b7280;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 15px;
+            text-align: center;
+        }
+
+        th {
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .product {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .product:hover {
+            border-color: #2563eb;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
+        }
+
+        .product.selected {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            font-size: 18px;
+            color: #2563eb;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .product-stock {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .cart {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #86efac;
+        }
+
+        .cart h2 {
+            color: #166534;
+            margin-top: 0;
+        }
+
+        .total-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            text-align: right;
+            border: 2px solid #e5e7eb;
+        }
+
+        .total-price {
+            font-size: 32px;
+            color: #2563eb;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .alert.success {
+            background: #dcfce7;
+            color: #166534;
+            border-left: 4px solid #10b981;
+        }
+
+        .alert.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border-left: 4px solid #dc2626;
+        }
+
+        .alert.info {
+            background: #dbeafe;
+            color: #0c4a6e;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-content h2 {
+            color: #1f2937;
+            margin-top: 0;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .modal-buttons button.confirm {
+            background: #2563eb;
+            color: white;
+        }
+
+        .modal-buttons button.cancel {
+            background: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .quantity-input {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .quantity-input button {
+            background: #e5e7eb;
+            border: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .quantity-input button:hover {
+            background: #d1d5db;
+        }
+
+        .quantity-input input {
+            width: 50px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                font-size: 24px;
+            }
+
+            nav {
+                flex-direction: column;
+            }
+
+            nav button {
+                padding: 12px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .input-group {
+                flex-direction: column;
+            }
+
+            input, button.action {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>🏪 학교 매점 POS V2</header>
+
+        <nav>
+            <button class="nav-btn active" data-tab="student">학생조회</button>
+            <button class="nav-btn" data-tab="product">상품관리</button>
+            <button class="nav-btn" data-tab="pos">POS</button>
+            <button class="nav-btn" data-tab="history">거래내역</button>
+        </nav>
+
+        <div class="content">
+            <!-- 학생 조회 -->
+            <section id="student" class="active">
+                <div class="card">
+                    <h2>👥 학생 조회</h2>
+                    <div class="input-group">
+                        <input id="studentSearch" placeholder="학생 이름 또는 번호 입력">
+                        <button class="action" onclick="searchStudent()">검색</button>
+                        <button class="action secondary" onclick="renderStudents()">초기화</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>번호</th>
+                                <th>이름</th>
+                                <th>잔액</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTable"></tbody>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3>➕ 학생 추가</h3>
+                    <div class="input-group">
+                        <input id="sNum" placeholder="번호" type="number">
+                        <input id="sName" placeholder="이름">
+                        <input id="sMoney" placeholder="잔액" type="number">
+                        <button class="action" onclick="addStudent()">추가</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 상품 관리 -->
+            <section id="product">
+                <div class="card">
+                    <h2>📦 상품 관리</h2>
+                    <div class="input-group">
+                        <input id="pName" placeholder="상품명">
+                        <input id="pPrice" placeholder="가격" type="number">
+                        <input id="pStock" placeholder="재고" type="number">
+                        <button class="action" onclick="addProduct()">상품 추가</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>상품명</th>
+                                <th>가격</th>
+                                <th>재고</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productTable"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- POS -->
+            <section id="pos">
+                <div id="alertContainer"></div>
+
+                <div class="card">
+                    <h2>🛒 상품 선택</h2>
+                    <div class="product-grid" id="productList"></div>
+                </div>
+
+                <div class="cart">
+                    <h2>🛍️ 장바구니</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>상품</th>
+                                <th>수량</th>
+                                <th>단가</th>
+                                <th>합계</th>
+                                <th>삭제</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartTable"></tbody>
+                    </table>
+
+                    <div class="total-section">
+                        <div>총 금액:</div>
+                        <div class="total-price">
+                            <span id="total">0</span>원
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <input id="buyer" placeholder="학생 번호" type="number">
+                        <button class="action" onclick="pay()" style="flex: 0 0 auto;">결제</button>
+                        <button class="action secondary" onclick="clearCart()" style="flex: 0 0 auto;">장바구니 비우기</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 거래 내역 -->
+            <section id="history">
+                <div class="card">
+                    <h2>📋 거래 내역</h2>
+                    <div class="input-group">
+                        <button class="action secondary" onclick="clearHistory()">거래내역 초기화</button>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>날짜/시간</th>
+                                <th>학생</th>
+                                <th>상품</th>
+                                <th>금액</th>
+                                <th>남은잔액</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTable"></tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- 확인 모달 -->
+    <div id="confirmModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">확인</h2>
+            <p id="modalMessage"></p>
+            <div class="modal-buttons">
+                <button class="confirm" onclick="confirmAction()">확인</button>
+                <button class="cancel" onclick="closeModal()">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
